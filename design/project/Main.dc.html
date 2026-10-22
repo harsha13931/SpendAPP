@@ -41,10 +41,12 @@ button{font:inherit;color:inherit}
         <div style="background: #EFF4FF; border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 2px">
           <span style="font-size: 12px; color: #1849A9">Income</span>
           <span class="num" style="font-size: 18px; font-weight: 600; color: #1849A9">{{incomeText}}</span>
+          <span style="font-size: 12px; color: #1849A9">2 credits</span>
         </div>
         <div style="background: #F2F4F7; border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 2px">
           <span style="font-size: 12px; color: #475467">Top category</span>
-          <span style="font-size: 18px; font-weight: 600; color: #101828">{{topText}}</span>
+          <span style="font-size: 18px; font-weight: 600; color: #101828; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{topText}}</span>
+          <span style="font-size: 12px; color: #475467">{{topPct}}</span>
         </div>
       </div>
     </section>
@@ -140,7 +142,7 @@ button{font:inherit;color:inherit}
           <sc-for list="{{choices}}" as="o" hint-placeholder-count="8">
             <button type="button" onClick="{{o.pick}}" aria-pressed="{{o.pressed}}" style="{{o.style}}">
               <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#101828" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="{{o.icon}}"></path></svg>
-              <span style="font-size: 12px; font-weight: 500">{{o.name}}</span>
+              <span style="font-size: 11px; font-weight: 500; max-width: 100%; overflow: hidden; text-overflow: ellipsis">{{o.name}}</span>
             </button>
           </sc-for>
         </div>
@@ -266,7 +268,8 @@ class Component extends DCLogic {
     return {
       spendText: rupees(spend),
       incomeText: rupees(income),
-      topText: cats.length ? cats[0].name + ' · ' + cats[0].pctText.replace('.0%', '%') : 'None yet',
+      topText: cats.length ? cats[0].name : 'None yet',
+      topPct: cats.length ? Math.round(parseFloat(cats[0].pctText)) + '% of spend' : '',
       cats: cats,
       txns: rows,
       hasReview: review.length > 0,
