@@ -1,0 +1,64 @@
+import pytest
+from fastapi.testclient import TestClient
+
+from spend_engine.api import create_app
+
+
+@pytest.fixture
+def client(service):
+    return TestClient(create_app(service))
+
+
+SMS = "ICICI Bank Acct XX234 debited for Rs 349.00 on 21-Oct-26; ZOMATO credited. UPI:629412345680."
+
+
+def test_health(client):
+    body = client.get("/health").json()
+    assert body["status"] == "ok" and body["merchants"] >= 100
+
+
+def test_categorize(client):
+    r = client.post("/categorize", json={"user_id": "u1", "sms": SMS, "sender": "JD-ICICIB"})
+    assert r.status_code == 200
+    body = r.json()
+    assert body["result"] == {"category": "Food", "confidence": 0.92, "layer": "alias", "matched": "Zomato"}
+    t = body["transaction"]
+    assert (t["amount"], t["amount_paise"], t["direction"], t["txn_date"], t["mode"]) == (
+        349.0, 34900, "debit", "2026-10-21", "UPI"
+    )
+
+
+def test_categorize_parse_failure_is_422(client):
+    r = client.post("/categorize", json={"user_id": "u1", "sms": "Your OTP is 123456 for Rs.10"})
+    assert r.status_code == 422
+    assert r.json()["detail"]["reason"] == "not_transactional"
+
+
+def test_correction_flow(client):
+    txn = client.post("/categorize", json={"user_id": "u1", "sms": SMS}).json()
+    r = client.post(
+        "/corrections", json={"user_id": "u1", "transaction_id": txn["transaction_id"], "category": "Groceries"}
+    )
+    assert r.status_code == 200 and r.json()["updated_transactions"] == 1
+
+    again = SMS.replace("629412345680", "629412345699")
+    body = client.post("/categorize", json={"user_id": "u1", "sms": again}).json()
+    assert body["result"]["category"] == "Groceries" and body["result"]["layer"] == "user_override"
+
+
+def test_correction_validation(client):
+    assert client.post("/corrections", json={"user_id": "u1", "category": "Food"}).status_code == 422
+    assert client.post("/corrections", json={"user_id": "u1", "category": "Snacks", "merchant": "x"}).status_code == 422
+    r = client.post("/corrections", json={"user_id": "u1", "category": "Food", "transaction_id": 999})
+    assert r.status_code == 404
+
+
+def test_summary(client):
+    client.post("/categorize", json={"user_id": "u1", "sms": SMS})
+    body = client.get("/summary", params={"date": "2026-10-21", "user_id": "u1"}).json()
+    assert body["total_spend"] == 349.0 and body["top_category"] == "Food"
+    assert body["by_category"] == [{"category": "Food", "amount": 349.0, "percentage": 100.0, "count": 1}]
+
+
+def test_summary_requires_date(client):
+    assert client.get("/summary", params={"user_id": "u1"}).status_code == 422

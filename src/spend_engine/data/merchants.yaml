@@ -1,0 +1,153 @@
+# Seed merchant dictionary for SPEND.
+#
+# name:     display name
+# category: one of Food, Groceries, Transport, Shopping, Bills,
+#           Entertainment, Health, Income, Other
+# aliases:  strings that appear in SMS merchant fields (matched after
+#           normalisation: lower-case, punctuation and "pvt ltd" style
+#           suffixes removed). The longest matching alias wins, so
+#           "swiggy instamart" beats "swiggy".
+# vpas:     known UPI handles. Example handles are illustrative.
+#
+# Also matched against the local part of a VPA: "bigbasket.payu@hdfcbank"
+# hits the "bigbasket" alias.
+
+version: "2026.10.1"
+
+merchants:
+  # ---------------------------------------------------------------- Food
+  - {name: Swiggy, category: Food, aliases: [swiggy, bundl technologies], vpas: [swiggy@icici, swiggyfood@axisbank]}
+  - {name: Zomato, category: Food, aliases: [zomato, zomato ltd], vpas: [zomato@hdfcbank, zomatoorder@icici]}
+  - {name: Domino's Pizza, category: Food, aliases: [dominos, domino s, jubilant foodworks], vpas: [dominos@hdfcbank]}
+  - {name: McDonald's, category: Food, aliases: [mcdonalds, mcdonald s, hardcastle restaurants, connaught plaza restaurants], vpas: []}
+  - {name: KFC, category: Food, aliases: [kfc, devyani international], vpas: []}
+  - {name: Pizza Hut, category: Food, aliases: [pizza hut, pizzahut], vpas: []}
+  - {name: Burger King, category: Food, aliases: [burger king, burgerking, restaurant brands asia], vpas: []}
+  - {name: Starbucks, category: Food, aliases: [starbucks, tata starbucks], vpas: []}
+  - {name: Cafe Coffee Day, category: Food, aliases: [cafe coffee day, ccd, coffee day], vpas: []}
+  - {name: Haldiram's, category: Food, aliases: [haldirams, haldiram], vpas: []}
+  - {name: Subway, category: Food, aliases: [subway], vpas: []}
+  - {name: Chaayos, category: Food, aliases: [chaayos], vpas: []}
+  - {name: Third Wave Coffee, category: Food, aliases: [third wave coffee, thirdwave], vpas: []}
+  - {name: Barbeque Nation, category: Food, aliases: [barbeque nation, barbequenation], vpas: []}
+  - {name: EatSure, category: Food, aliases: [eatsure, box8, faasos, behrouz biryani, rebel foods], vpas: []}
+  - {name: Wow! Momo, category: Food, aliases: [wow momo, wowmomo], vpas: []}
+  - {name: Chai Point, category: Food, aliases: [chai point, chaipoint, mountain trail foods], vpas: []}
+  - {name: Blue Tokai, category: Food, aliases: [blue tokai, bluetokai], vpas: []}
+  - {name: EatClub, category: Food, aliases: [eatclub], vpas: []}
+
+  # ----------------------------------------------------------- Groceries
+  - {name: BigBasket, category: Groceries, aliases: [bigbasket, big basket, bbnow, supermarket grocery supplies, innovative retail concepts], vpas: [bigbasket@hdfcbank]}
+  - {name: Blinkit, category: Groceries, aliases: [blinkit, grofers, blink commerce], vpas: [blinkit@hdfcbank]}
+  - {name: Zepto, category: Groceries, aliases: [zepto, kiranakart, zeptonow], vpas: [zepto@ybl]}
+  - {name: Swiggy Instamart, category: Groceries, aliases: [swiggy instamart, instamart], vpas: [instamart@icici]}
+  - {name: DMart, category: Groceries, aliases: [dmart, d mart, avenue supermarts], vpas: []}
+  - {name: Reliance Smart, category: Groceries, aliases: [reliance smart, reliance fresh, smart bazaar, reliance retail], vpas: []}
+  - {name: More Supermarket, category: Groceries, aliases: [more supermarket, more retail, more megastore], vpas: []}
+  - {name: JioMart, category: Groceries, aliases: [jiomart, jio mart], vpas: [jiomart@icici]}
+  - {name: Amazon Fresh, category: Groceries, aliases: [amazon fresh, amazonfresh], vpas: []}
+  - {name: Nature's Basket, category: Groceries, aliases: [natures basket, nature s basket], vpas: []}
+  - {name: Spencer's, category: Groceries, aliases: [spencers, spencer s retail], vpas: []}
+  - {name: Star Bazaar, category: Groceries, aliases: [star bazaar, starbazaar, trent hypermarket], vpas: []}
+  - {name: Country Delight, category: Groceries, aliases: [country delight, countrydelight], vpas: []}
+  - {name: FreshToHome, category: Groceries, aliases: [freshtohome, fresh to home], vpas: []}
+  - {name: Licious, category: Groceries, aliases: [licious, delightful gourmet], vpas: []}
+  - {name: Ratnadeep Supermarket, category: Groceries, aliases: [ratnadeep], vpas: []}
+
+  # ----------------------------------------------------------- Transport
+  - {name: Ola, category: Transport, aliases: [ola, olacabs, ola cabs, ani technologies], vpas: [olacabs@ybl, olamoney@axisbank]}
+  - {name: Uber, category: Transport, aliases: [uber, uber india, uberrides], vpas: [uber@axisbank, uberindia@icici]}
+  - {name: Rapido, category: Transport, aliases: [rapido, roppen transportation], vpas: [rapido@ybl, rapido.ride@axisbank]}
+  - {name: Namma Yatri, category: Transport, aliases: [namma yatri, nammayatri], vpas: []}
+  - {name: BluSmart, category: Transport, aliases: [blusmart, blu smart], vpas: []}
+  - {name: IRCTC, category: Transport, aliases: [irctc, indian railway], vpas: [irctc@sbi]}
+  - {name: RedBus, category: Transport, aliases: [redbus, red bus], vpas: []}
+  - {name: AbhiBus, category: Transport, aliases: [abhibus], vpas: []}
+  - {name: MakeMyTrip, category: Transport, aliases: [makemytrip, make my trip, mmt], vpas: []}
+  - {name: IndiGo, category: Transport, aliases: [indigo, interglobe aviation], vpas: []}
+  - {name: Air India, category: Transport, aliases: [air india, airindia], vpas: []}
+  - {name: Indian Oil, category: Transport, aliases: [indian oil, iocl, indianoil], vpas: []}
+  - {name: HP Petrol, category: Transport, aliases: [hpcl, hindustan petroleum, hp petrol], vpas: []}
+  - {name: Bharat Petroleum, category: Transport, aliases: [bharat petroleum, bpcl], vpas: []}
+  - {name: Shell, category: Transport, aliases: [shell india, shell petrol], vpas: []}
+  - {name: FASTag, category: Transport, aliases: [fastag, netc fastag, netc], vpas: []}
+  - {name: Delhi Metro, category: Transport, aliases: [delhi metro, dmrc], vpas: []}
+  - {name: Mumbai Metro, category: Transport, aliases: [mumbai metro, mmopl], vpas: []}
+  - {name: Namma Metro, category: Transport, aliases: [namma metro, bmrcl], vpas: []}
+  - {name: Yulu, category: Transport, aliases: [yulu], vpas: []}
+
+  # ------------------------------------------------------------ Shopping
+  - {name: Amazon, category: Shopping, aliases: [amazon, amazon pay, amazon india, amazon seller services, amzn], vpas: [amazon@apl, amazonpay@apl]}
+  - {name: Flipkart, category: Shopping, aliases: [flipkart, flipkart internet], vpas: [flipkart@axisbank, fkrt@ybl]}
+  - {name: Myntra, category: Shopping, aliases: [myntra, myntra designs], vpas: [myntra@icici]}
+  - {name: AJIO, category: Shopping, aliases: [ajio], vpas: []}
+  - {name: Meesho, category: Shopping, aliases: [meesho, fashnear technologies], vpas: []}
+  - {name: Nykaa, category: Shopping, aliases: [nykaa, fsn e commerce], vpas: []}
+  - {name: Tata CLiQ, category: Shopping, aliases: [tata cliq, tatacliq], vpas: []}
+  - {name: Croma, category: Shopping, aliases: [croma, infiniti retail], vpas: []}
+  - {name: Reliance Digital, category: Shopping, aliases: [reliance digital], vpas: []}
+  - {name: Decathlon, category: Shopping, aliases: [decathlon], vpas: []}
+  - {name: IKEA, category: Shopping, aliases: [ikea], vpas: []}
+  - {name: Lenskart, category: Shopping, aliases: [lenskart], vpas: []}
+  - {name: FirstCry, category: Shopping, aliases: [firstcry, first cry, brainbees], vpas: []}
+  - {name: Pepperfry, category: Shopping, aliases: [pepperfry], vpas: []}
+  - {name: Shoppers Stop, category: Shopping, aliases: [shoppers stop, shoppersstop], vpas: []}
+  - {name: Lifestyle, category: Shopping, aliases: [lifestyle stores, lifestyle international], vpas: []}
+  - {name: Westside, category: Shopping, aliases: [westside], vpas: []}
+  - {name: Zara, category: Shopping, aliases: [zara, inditex trent], vpas: []}
+  - {name: H&M, category: Shopping, aliases: [h m hennes, hennes mauritz, h and m], vpas: []}
+  - {name: Uniqlo, category: Shopping, aliases: [uniqlo], vpas: []}
+
+  # --------------------------------------------------------------- Bills
+  - {name: BESCOM, category: Bills, aliases: [bescom, bangalore electricity], vpas: []}
+  - {name: Tata Power, category: Bills, aliases: [tata power, tatapower], vpas: []}
+  - {name: Adani Electricity, category: Bills, aliases: [adani electricity, adani electricity mumbai], vpas: []}
+  - {name: MSEDCL, category: Bills, aliases: [msedcl, mahavitaran, maharashtra state electricity], vpas: []}
+  - {name: BSES, category: Bills, aliases: [bses, bses rajdhani, bses yamuna], vpas: []}
+  - {name: TNEB, category: Bills, aliases: [tneb, tangedco, tnpdcl], vpas: []}
+  - {name: TSSPDCL, category: Bills, aliases: [tsspdcl, tgspdcl], vpas: []}
+  - {name: Airtel, category: Bills, aliases: [airtel, bharti airtel, airtel postpaid, airtel prepaid, airtel xstream], vpas: [airtel@icici, airtelpayments@airtel]}
+  - {name: Jio, category: Bills, aliases: [jio, reliance jio, jio prepaid, jio postpaid, jiofiber], vpas: [jio@sbi]}
+  - {name: Vi, category: Bills, aliases: [vodafone idea, vodafone, vi postpaid, vi prepaid], vpas: []}
+  - {name: BSNL, category: Bills, aliases: [bsnl, bharat sanchar nigam], vpas: []}
+  - {name: ACT Fibernet, category: Bills, aliases: [act fibernet, atria convergence], vpas: []}
+  - {name: Hathway, category: Bills, aliases: [hathway], vpas: []}
+  - {name: Tata Play, category: Bills, aliases: [tata play, tata sky, tataplay], vpas: []}
+  - {name: Mahanagar Gas, category: Bills, aliases: [mahanagar gas, mgl], vpas: []}
+  - {name: Indraprastha Gas, category: Bills, aliases: [indraprastha gas, igl], vpas: []}
+  - {name: Indane Gas, category: Bills, aliases: [indane, indane gas], vpas: []}
+  - {name: Bharat Gas, category: Bills, aliases: [bharat gas, bharatgas], vpas: []}
+  - {name: LIC, category: Bills, aliases: [lic, life insurance corporation, lic of india], vpas: []}
+  - {name: BWSSB, category: Bills, aliases: [bwssb, bangalore water supply], vpas: []}
+
+  # ------------------------------------------------------- Entertainment
+  - {name: Netflix, category: Entertainment, aliases: [netflix, netflix com, netflix entertainment], vpas: [netflix@hdfcbank, netflixupi@icici]}
+  - {name: Amazon Prime, category: Entertainment, aliases: [amazon prime, prime video, primevideo], vpas: []}
+  - {name: JioHotstar, category: Entertainment, aliases: [jiohotstar, hotstar, disney hotstar, novi digital, jiocinema], vpas: []}
+  - {name: Spotify, category: Entertainment, aliases: [spotify], vpas: [spotify@hdfcbank]}
+  - {name: YouTube Premium, category: Entertainment, aliases: [youtube premium, youtube, google youtube], vpas: []}
+  - {name: BookMyShow, category: Entertainment, aliases: [bookmyshow, book my show, bigtree entertainment], vpas: [bookmyshow@icici]}
+  - {name: PVR INOX, category: Entertainment, aliases: [pvr, inox, pvr inox, pvr cinemas], vpas: []}
+  - {name: SonyLIV, category: Entertainment, aliases: [sonyliv, sony liv], vpas: []}
+  - {name: ZEE5, category: Entertainment, aliases: [zee5, zee 5], vpas: []}
+  - {name: Apple Media Services, category: Entertainment, aliases: [apple media services, itunes, apple com bill], vpas: []}
+  - {name: Google Play, category: Entertainment, aliases: [google play, googleplay], vpas: []}
+  - {name: Steam, category: Entertainment, aliases: [steam games, steampowered], vpas: []}
+  - {name: Gaana, category: Entertainment, aliases: [gaana], vpas: []}
+  - {name: Audible, category: Entertainment, aliases: [audible], vpas: []}
+
+  # -------------------------------------------------------------- Health
+  - {name: Apollo Pharmacy, category: Health, aliases: [apollo pharmacy, apollo 24 7, apollo247], vpas: []}
+  - {name: Apollo Hospitals, category: Health, aliases: [apollo hospitals, apollo hospital], vpas: []}
+  - {name: PharmEasy, category: Health, aliases: [pharmeasy, pharm easy], vpas: []}
+  - {name: Tata 1mg, category: Health, aliases: [tata 1mg, 1mg], vpas: []}
+  - {name: Netmeds, category: Health, aliases: [netmeds], vpas: []}
+  - {name: MedPlus, category: Health, aliases: [medplus, med plus], vpas: []}
+  - {name: Practo, category: Health, aliases: [practo], vpas: []}
+  - {name: Cult.fit, category: Health, aliases: [cult fit, cultfit, curefit], vpas: []}
+  - {name: Fortis Healthcare, category: Health, aliases: [fortis, fortis healthcare], vpas: []}
+  - {name: Max Healthcare, category: Health, aliases: [max healthcare, max hospital], vpas: []}
+  - {name: Dr Lal PathLabs, category: Health, aliases: [dr lal pathlabs, lal pathlabs, lalpathlabs], vpas: []}
+  - {name: Thyrocare, category: Health, aliases: [thyrocare], vpas: []}
+  - {name: HealthifyMe, category: Health, aliases: [healthifyme], vpas: []}
+  - {name: Wellness Forever, category: Health, aliases: [wellness forever], vpas: []}

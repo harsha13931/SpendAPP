@@ -1,0 +1,77 @@
+# SPEND
+
+Android-first personal finance for India. SPEND reads bank and UPI alerts,
+auto-categorises each payment and shows a daily income-vs-spend summary.
+
+This repository holds **milestone 1**: the categorisation engine, a Python
+package with a FastAPI service. See [`docs/PLAN.md`](docs/PLAN.md) for the
+roadmap, the Google Play SMS-policy finding, and the UX design.
+
+## Quick start
+
+```bash
+pip install -e ".[dev]"
+pytest                                   # unit tests + 85% accuracy gate
+uvicorn spend_engine.api:app --reload    # http://127.0.0.1:8000/docs
+```
+
+Set `SPEND_DB=spend.db` to persist data between restarts. The default is
+in-memory.
+
+```bash
+curl -s -X POST localhost:8000/categorize -H 'content-type: application/json' -d '{
+  "user_id": "demo",
+  "sms": "Sent Rs.85.00 from Kotak Bank AC X7890 to rapido.ride@axisbank on 21-10-26.UPI Ref 629412345685."
+}'
+# → result: {"category": "Transport", "confidence": 0.98, "layer": "vpa", "matched": "Rapido"}
+
+curl -s -X POST localhost:8000/corrections -H 'content-type: application/json' \
+  -d '{"user_id": "demo", "transaction_id": 1, "category": "Bills"}'
+
+curl -s 'localhost:8000/summary?date=2026-10-21&user_id=demo'
+```
+
+| Endpoint | Purpose |
+|---|---|
+| `POST /categorize` | Parse one SMS, categorise it, store it (deduplicated by ref no.) |
+| `POST /corrections` | Re-tag a transaction or payee. Stored as a per-user override that beats every other layer |
+| `GET /summary?date=&user_id=` | Income, spend, net, spend by category with %, top category |
+| `GET /health`, `GET /categories` | Rules version, merchant count, category list |
+
+## Layout
+
+```
+src/spend_engine/
+  parser.py          rule-driven SMS parser (no bank regex in code)
+  categorizer.py     override → credit⇒Income → VPA → alias → fuzzy → keyword → Other
+  fuzzy.py           Levenshtein
+  store.py           SQLite: transactions, overrides, parse_failures
+  service.py         parse → categorise → store; corrections; summaries
+  summary.py         daily summary
+  api.py             FastAPI app
+  evaluate.py        accuracy report over labeled sets
+  data/
+    sms_rules.v1.yaml  versioned bank formats and field extractors
+    merchants.yaml     123 seeded Indian merchants and billers
+    keywords.yaml      keyword fallback rules
+tests/
+  data/labeled_*.yaml  183 fictional labeled SMS (dev, holdout-1, blind holdout-2)
+reports/accuracy.md    generated accuracy report
+design/project/        UX design canvas source
+docs/PLAN.md           plan, policy check, design notes
+```
+
+## Adding a bank format
+
+Add a template (or a generic extractor) to `src/spend_engine/data/sms_rules.v1.yaml`,
+bump `version`, and add labeled examples to `tests/data/`. Then regenerate the
+report:
+
+```bash
+python -m spend_engine.evaluate tests/data/labeled_dev.yaml \
+  tests/data/labeled_holdout1.yaml tests/data/labeled_holdout2.yaml \
+  --report reports/accuracy.md
+```
+
+All sample SMS in this repository are fictional. Never commit real bank
+messages, account numbers or credentials.

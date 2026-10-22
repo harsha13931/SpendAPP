@@ -1,0 +1,17 @@
+# Keyword rules: the fallback layer for merchants that are not in the seed
+# dictionary ("SHARMA MEDICAL STORE", "GREEN LEAF CAFE").
+#
+# A keyword matches a whole word (or the word plus a trailing "s") of the
+# normalised merchant string. Multi-word keywords match as a phrase. The
+# category with the most hits wins; ties go to the category listed first.
+
+version: "2026.10.1"
+
+categories:
+  Health: [pharmacy, pharma, medical, medicals, medicos, chemist, chemists, druggist, clinic, hospital, diagnostic, diagnostics, pathlab, lab, dental, dentist, health, healthcare, ayurvedic, ayurveda, homeopathy, optical, opticals, gym, fitness, physio, nursing home]
+  Bills: [electricity, power, water supply, water board, gas, broadband, fibernet, internet, recharge, postpaid, prepaid, dth, insurance, municipal, corporation tax, property tax, maintenance, society, rent, bill, billpay, utility, utilities, telecom, mobile bill]
+  Transport: [petrol, petroleum, fuel, fuels, filling station, service station, auto, autorickshaw, cab, cabs, taxi, metro, parking, toll, fastag, travels, tours, railway, railways, bus, airlines, airways, aviation]
+  Groceries: [kirana, supermarket, hypermarket, mart, provision, provisions, general store, vegetable, vegetables, fruit, fruits, dairy, milk, grocery, groceries, departmental, fresh, organic, meat, chicken, mutton, fish]
+  Food: [cafe, coffee, restaurant, restaurants, hotel, dhaba, bakery, bakers, sweets, sweet, biryani, pizza, kitchen, canteen, food, foods, tea, chai, juice, mess, bhavan, bhawan, idli, dosa, tiffin, tiffins, eatery, bistro, grill, dine, diner, caterers, momos, shawarma, chaat, darshini, udupi, bhojanalaya, upahar, sweet mart]
+  Entertainment: [cinema, cinemas, movie, movies, theatre, theater, multiplex, gaming, games, club, amusement, bowling, concert, events, ott, streaming]
+  Shopping: [fashion, garments, textiles, textile, apparel, clothing, footwear, shoes, electronics, mobiles, boutique, jewellers, jewellery, jewelers, emporium, mall, retail, store, stores, enterprises, traders, collection, collections, furniture, decor, gifts, toys, stationery, books, hardware]

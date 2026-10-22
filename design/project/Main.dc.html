@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>SPEND · Today</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#175CD3}a:hover{color:#1849A9}
+button{font:inherit;color:inherit}
+.num{font-family:'Space Grotesk',system-ui,sans-serif;font-variant-numeric:tabular-nums}
+.scroll::-webkit-scrollbar{width:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; display: flex; flex-direction: column; background: #F2F4F7; font-family: Inter, system-ui, sans-serif; color: #101828">
+
+  <header style="display: flex; align-items: center; justify-content: space-between; padding: 20px 20px 12px">
+    <div style="display: flex; flex-direction: column; gap: 2px">
+      <span style="font-size: 13px; font-weight: 600; letter-spacing: 0.12em; color: #475467">SPEND</span>
+      <h1 class="num" style="margin: 0; font-size: 24px; font-weight: 600">Today, 21 Oct</h1>
+    </div>
+    <button type="button" aria-label="Pick a date" style="width: 44px; height: 44px; border-radius: 22px; border: 1px solid #E4E7EC; background: #FFFFFF; display: flex; align-items: center; justify-content: center; cursor: pointer">
+      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#344054" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z M4 10h16 M8 2v4 M16 2v4"></path></svg>
+    </button>
+  </header>
+
+  <main class="scroll" style="flex: 1; overflow-y: auto; padding: 0 16px 24px; display: flex; flex-direction: column; gap: 12px">
+
+    <section aria-label="Daily summary" style="background: #FFFFFF; border-radius: 20px; padding: 20px; display: flex; flex-direction: column; gap: 16px">
+      <div style="display: flex; flex-direction: column; gap: 4px">
+        <span style="font-size: 13px; color: #475467">Spent today</span>
+        <span class="num" style="font-size: 40px; font-weight: 600; line-height: 1.05; color: #101828">{{spendText}}</span>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+        <div style="background: #EFF4FF; border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 2px">
+          <span style="font-size: 12px; color: #1849A9">Income</span>
+          <span class="num" style="font-size: 18px; font-weight: 600; color: #1849A9">{{incomeText}}</span>
+        </div>
+        <div style="background: #F2F4F7; border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 2px">
+          <span style="font-size: 12px; color: #475467">Top category</span>
+          <span style="font-size: 18px; font-weight: 600; color: #101828">{{topText}}</span>
+        </div>
+      </div>
+    </section>
+
+    <sc-if value="{{hasReview}}" hint-placeholder-val="{{ true }}">
+      <button type="button" onClick="{{openReview}}" style="display: flex; align-items: center; gap: 12px; text-align: left; width: 100%; min-height: 64px; padding: 12px 16px; border-radius: 16px; border: 1px solid #F9C9A8; background: #FFF4ED; cursor: pointer">
+        <span style="width: 36px; height: 36px; flex: none; border-radius: 18px; background: #C4320A; display: flex; align-items: center; justify-content: center">
+          <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round"><path d="M12 7v6 M12 17h.01"></path></svg>
+        </span>
+        <span style="flex: 1; display: flex; flex-direction: column; gap: 2px">
+          <span style="font-size: 15px; font-weight: 600; color: #97180C">{{reviewTitle}}</span>
+          <span style="font-size: 13px; color: #7A2E0E">{{reviewSub}}</span>
+        </span>
+        <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#97180C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg>
+      </button>
+    </sc-if>
+
+    <section aria-label="Spend by category" style="background: #FFFFFF; border-radius: 20px; padding: 20px; display: flex; flex-direction: column; gap: 14px">
+      <h2 style="margin: 0; font-size: 16px; font-weight: 600">Where it went</h2>
+      <div aria-hidden="true" style="display: flex; height: 12px; border-radius: 6px; overflow: hidden; gap: 2px; background: #F2F4F7">
+        <sc-for list="{{cats}}" as="c" hint-placeholder-count="6">
+          <div style="{{c.segStyle}}"></div>
+        </sc-for>
+      </div>
+      <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px">
+        <sc-for list="{{cats}}" as="c" hint-placeholder-count="6">
+          <li style="display: flex; align-items: center; gap: 10px; min-height: 28px">
+            <span style="{{c.dotStyle}}"></span>
+            <span style="flex: 1; font-size: 14px">{{c.name}}</span>
+            <span class="num" style="font-size: 14px; font-weight: 500">{{c.amountText}}</span>
+            <span class="num" style="width: 52px; text-align: right; font-size: 13px; color: #475467">{{c.pctText}}</span>
+          </li>
+        </sc-for>
+      </ul>
+    </section>
+
+    <section aria-label="Transactions" style="background: #FFFFFF; border-radius: 20px; padding: 8px 0; display: flex; flex-direction: column">
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 20px 4px">
+        <h2 style="margin: 0; font-size: 16px; font-weight: 600">Transactions</h2>
+        <a href="Activity.dc.html" style="font-size: 14px; font-weight: 500; text-decoration: none; padding: 12px 0">See all</a>
+      </div>
+      <ul style="list-style: none; margin: 0; padding: 0">
+        <sc-for list="{{txns}}" as="t" hint-placeholder-count="6">
+          <li>
+            <button type="button" onClick="{{t.open}}" style="width: 100%; display: flex; align-items: center; gap: 12px; padding: 10px 20px; min-height: 60px; border: 0; background: transparent; text-align: left; cursor: pointer">
+              <span style="{{t.iconBg}}">
+                <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#101828" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="{{t.icon}}"></path></svg>
+              </span>
+              <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+                <span style="font-size: 15px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{t.name}}</span>
+                <span style="font-size: 12px; color: #475467">{{t.sub}}</span>
+              </span>
+              <span style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px">
+                <span class="num" style="{{t.amountStyle}}">{{t.amountText}}</span>
+                <span style="{{t.chipStyle}}">{{t.chip}}</span>
+              </span>
+            </button>
+          </li>
+        </sc-for>
+      </ul>
+    </section>
+  </main>
+
+  <nav aria-label="Main" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); background: #FFFFFF; border-top: 1px solid #E4E7EC; padding: 6px 8px 14px">
+    <a href="Main.dc.html" aria-current="page" style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px; min-height: 44px; text-decoration: none; color: #101828; font-size: 12px; font-weight: 600">
+      <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10l8-6 8 6v10z M10 20v-6h4v6"></path></svg>
+      Today
+    </a>
+    <a href="Activity.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px; min-height: 44px; text-decoration: none; color: #475467; font-size: 12px; font-weight: 500">
+      <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16 M4 12h16 M4 18h10"></path></svg>
+      Activity
+    </a>
+    <a href="Onboarding.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px; min-height: 44px; text-decoration: none; color: #475467; font-size: 12px; font-weight: 500">
+      <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.4 8.2-8 9-4.6-.8-8-4.5-8-9V6z M9 12l2 2 4-4"></path></svg>
+      Privacy
+    </a>
+  </nav>
+
+  <sc-if value="{{toastOn}}" hint-placeholder-val="{{ false }}">
+    <div role="status" style="position: absolute; left: 16px; right: 16px; bottom: 92px; padding: 14px 16px; border-radius: 14px; background: #101828; color: #FFFFFF; font-size: 14px; line-height: 1.4">{{toast}}</div>
+  </sc-if>
+
+  <sc-if value="{{sheetOn}}" hint-placeholder-val="{{ false }}">
+    <div style="position: absolute; inset: 0; background: rgba(16, 24, 40, 0.48); display: flex; flex-direction: column; justify-content: flex-end">
+      <button type="button" aria-label="Close" onClick="{{closeSheet}}" style="flex: 1; border: 0; background: transparent; cursor: pointer"></button>
+      <section role="dialog" aria-label="Change category" style="background: #FFFFFF; border-radius: 24px 24px 0 0; padding: 12px 20px 24px; display: flex; flex-direction: column; gap: 16px">
+        <div aria-hidden="true" style="align-self: center; width: 40px; height: 4px; border-radius: 2px; background: #D0D5DD"></div>
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <h2 style="margin: 0; font-size: 18px; font-weight: 600">{{sheetName}}</h2>
+          <span style="font-size: 13px; color: #475467">{{sheetSub}}</span>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px">
+          <sc-for list="{{choices}}" as="o" hint-placeholder-count="8">
+            <button type="button" onClick="{{o.pick}}" aria-pressed="{{o.pressed}}" style="{{o.style}}">
+              <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#101828" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="{{o.icon}}"></path></svg>
+              <span style="font-size: 12px; font-weight: 500">{{o.name}}</span>
+            </button>
+          </sc-for>
+        </div>
+        <label style="display: flex; align-items: flex-start; gap: 12px; font-size: 14px; line-height: 1.4; cursor: pointer">
+          <input type="checkbox" checked="{{applyAll}}" onChange="{{toggleAll}}" style="width: 20px; height: 20px; margin: 1px 0 0; accent-color: #101828">
+          <span>{{applyLabel}}</span>
+        </label>
+        <button type="button" onClick="{{save}}" style="height: 52px; border-radius: 14px; border: 0; background: #101828; color: #FFFFFF; font-size: 16px; font-weight: 600; cursor: pointer">Save</button>
+      </section>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+var CATS = {
+  Food: { color: '#E8590C', tint: '#FFF4E6', icon: 'M7 3v7a2 2 0 0 0 2 2v9 M11 3v7 M17 21V3c-2 1-3 3-3 6s1 4 3 4' },
+  Groceries: { color: '#2F9E44', tint: '#EBFBEE', icon: 'M3 4h2l2.4 11h11.1L21 7H6 M8 20a1.4 1.4 0 1 0 2.8 0a1.4 1.4 0 1 0-2.8 0 M15.5 20a1.4 1.4 0 1 0 2.8 0a1.4 1.4 0 1 0-2.8 0' },
+  Transport: { color: '#1C7ED6', tint: '#E7F5FF', icon: 'M5 17v-6l2-5h10l2 5v6z M5 17v2 M19 17v2 M5 11h14' },
+  Shopping: { color: '#AE3EC9', tint: '#F8F0FC', icon: 'M5 8h14l-1 13H6z M9 8V6a3 3 0 0 1 6 0v2' },
+  Bills: { color: '#F59F00', tint: '#FFF9DB', icon: 'M13 2L4 14h7l-1 8 9-12h-7z' },
+  Entertainment: { color: '#D6336C', tint: '#FFF0F6', icon: 'M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M10 9l5 3-5 3z' },
+  Health: { color: '#0CA678', tint: '#E6FCF5', icon: 'M12 20s-7-4.4-9-9.2C1.8 7.6 4 4.5 7.3 4.5c2 0 3.6 1 4.7 2.6 1.1-1.6 2.7-2.6 4.7-2.6 3.3 0 5.5 3.1 4.3 6.3C19 15.6 12 20 12 20z' },
+  Other: { color: '#868E96', tint: '#F1F3F5', icon: 'M5 12a1 1 0 1 0 2 0a1 1 0 1 0-2 0 M11 12a1 1 0 1 0 2 0a1 1 0 1 0-2 0 M17 12a1 1 0 1 0 2 0a1 1 0 1 0-2 0' },
+  Income: { color: '#175CD3', tint: '#EFF4FF', icon: 'M12 4v11 M7 10l5 5 5-5 M4 20h16' }
+};
+var PICKABLE = ['Food', 'Groceries', 'Transport', 'Shopping', 'Bills', 'Entertainment', 'Health', 'Other'];
+
+// Output of scripts/demo_day.py: fictional SMS run through spend_engine.
+var TXNS = [
+  { id: 9, name: 'Iron Paradise', mode: 'UPI', time: '9:40 pm', amount: 1500, dir: 'debit', category: 'Other', confidence: 0.2, layer: 'fallback' },
+  { id: 8, name: 'Sri Sai Medicals', mode: 'Card', time: '9:15 pm', amount: 875, dir: 'debit', category: 'Health', confidence: 0.6, layer: 'keyword' },
+  { id: 6, name: 'Amazon', mode: 'Card', time: '7:42 pm', amount: 1499, dir: 'debit', category: 'Shopping', confidence: 0.92, layer: 'alias' },
+  { id: 5, name: 'Zomato', mode: 'UPI', time: '1:20 pm', amount: 412, dir: 'debit', category: 'Food', confidence: 0.92, layer: 'alias' },
+  { id: 10, name: 'Priya S', mode: 'UPI', time: '12:05 pm', amount: 1200, dir: 'credit', category: 'Income', confidence: 0.9, layer: 'direction' },
+  { id: 4, name: 'BigBasket', mode: 'Card', time: '11:30 am', amount: 2340, dir: 'debit', category: 'Groceries', confidence: 0.92, layer: 'alias' },
+  { id: 3, name: 'Ganesh Tea Stall', mode: 'UPI', time: '10:10 am', amount: 60, dir: 'debit', category: 'Food', confidence: 0.6, layer: 'keyword' },
+  { id: 7, name: 'Netflix', mode: 'UPI', time: '8:15 am', amount: 199, dir: 'debit', category: 'Entertainment', confidence: 0.92, layer: 'alias' },
+  { id: 2, name: 'Rapido', mode: 'UPI', time: '8:02 am', amount: 149, dir: 'debit', category: 'Transport', confidence: 0.98, layer: 'vpa' },
+  { id: 1, name: 'Acme Technologies', mode: 'NEFT', time: '7:00 am', amount: 85000, dir: 'credit', category: 'Income', confidence: 0.9, layer: 'direction' }
+];
+
+function rupees(n) {
+  return '₹' + Math.round(n).toLocaleString('en-IN');
+}
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { overrides: {}, sheetId: null, picked: null, applyAll: true, toast: null };
+  }
+
+  effective(t) {
+    var o = this.state.overrides[t.id];
+    return o ? { category: o, confidence: 1, layer: 'user_override' } : t;
+  }
+
+  open(id) {
+    var t = TXNS.filter(function (x) { return x.id === id; })[0];
+    this.setState({ sheetId: id, picked: this.effective(t).category, applyAll: true, toast: null });
+  }
+
+  save() {
+    var t = TXNS.filter((x) => x.id === this.state.sheetId)[0];
+    var overrides = Object.assign({}, this.state.overrides);
+    overrides[t.id] = this.state.picked;
+    var msg = this.state.applyAll
+      ? 'Saved. Every ' + t.name + ' payment is now ' + this.state.picked + '.'
+      : 'Saved for this payment only.';
+    this.setState({ overrides: overrides, sheetId: null, toast: msg });
+    clearTimeout(this._toastTimer);
+    this._toastTimer = setTimeout(() => this.setState({ toast: null }), 3200);
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this._toastTimer);
+  }
+
+  chip(e) {
+    if (e.layer === 'user_override') return { text: 'You tagged', fg: '#344054', bg: '#F2F4F7' };
+    if (e.confidence >= 0.85) return { text: 'Auto', fg: '#475467', bg: 'transparent' };
+    if (e.confidence >= 0.5) return { text: 'Likely', fg: '#475467', bg: '#F2F4F7' };
+    return { text: 'Needs review', fg: '#97180C', bg: '#FFF4ED' };
+  }
+
+  renderVals() {
+    var spend = 0, income = 0, per = {};
+    var rows = TXNS.map((t) => {
+      var e = this.effective(t);
+      if (t.dir === 'credit') income += t.amount;
+      else { spend += t.amount; per[e.category] = (per[e.category] || 0) + t.amount; }
+      var meta = CATS[t.dir === 'credit' ? 'Income' : e.category];
+      var c = this.chip(e);
+      return {
+        name: t.name,
+        sub: t.mode + ' · ' + t.time + ' · ' + (t.dir === 'credit' ? 'Income' : e.category),
+        amountText: (t.dir === 'credit' ? '+' : '') + rupees(t.amount),
+        amountStyle: 'font-size: 15px; font-weight: 600; color: ' + (t.dir === 'credit' ? '#175CD3' : '#101828'),
+        icon: meta.icon,
+        iconBg: 'width: 40px; height: 40px; flex: none; border-radius: 20px; display: flex; align-items: center; justify-content: center; background: ' + meta.tint,
+        chip: c.text,
+        chipStyle: 'font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 10px; color: ' + c.fg + '; background: ' + c.bg,
+        open: () => this.open(t.id),
+        review: e.confidence < 0.5,
+        id: t.id
+      };
+    });
+
+    var cats = Object.keys(per).sort(function (a, b) { return per[b] - per[a]; }).map(function (name) {
+      var pct = spend ? (100 * per[name]) / spend : 0;
+      return {
+        name: name,
+        amountText: rupees(per[name]),
+        pctText: pct.toFixed(1) + '%',
+        segStyle: 'width: ' + pct + '%; background: ' + CATS[name].color,
+        dotStyle: 'width: 10px; height: 10px; border-radius: 5px; flex: none; background: ' + CATS[name].color
+      };
+    });
+
+    var review = rows.filter(function (r) { return r.review; });
+    var sheetT = TXNS.filter((x) => x.id === this.state.sheetId)[0];
+    var picked = this.state.picked;
+
+    return {
+      spendText: rupees(spend),
+      incomeText: rupees(income),
+      topText: cats.length ? cats[0].name + ' · ' + cats[0].pctText.replace('.0%', '%') : 'None yet',
+      cats: cats,
+      txns: rows,
+      hasReview: review.length > 0,
+      reviewTitle: review.length === 1 ? '1 payment needs a category' : review.length + ' payments need a category',
+      reviewSub: review.length ? review[0].name + ' didn’t match anything we know' : '',
+      openReview: () => review.length && this.open(review[0].id),
+      sheetOn: !!sheetT,
+      sheetName: sheetT ? sheetT.name : '',
+      sheetSub: sheetT ? rupees(sheetT.amount) + ' · ' + sheetT.mode + ' · ' + sheetT.time : '',
+      choices: PICKABLE.map((name) => ({
+        name: name,
+        icon: CATS[name].icon,
+        pressed: name === picked ? 'true' : 'false',
+        pick: () => this.setState({ picked: name }),
+        style: 'display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; min-height: 72px; border-radius: 14px; cursor: pointer; padding: 8px 4px; '
+          + (name === picked ? 'border: 2px solid #101828; background: ' + CATS[name].tint : 'border: 1px solid #E4E7EC; background: #FFFFFF')
+      })),
+      applyAll: this.state.applyAll,
+      applyLabel: sheetT ? 'Remember this for every payment to ' + sheetT.name : '',
+      toggleAll: () => this.setState({ applyAll: !this.state.applyAll }),
+      save: () => this.save(),
+      closeSheet: () => this.setState({ sheetId: null }),
+      toastOn: !!this.state.toast,
+      toast: this.state.toast || ''
+    };
+  }
+}
+</script>
+</body>
+</html>

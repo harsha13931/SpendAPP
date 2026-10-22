@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>SPEND · Activity</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#175CD3}a:hover{color:#1849A9}
+button{font:inherit;color:inherit}
+.num{font-family:'Space Grotesk',system-ui,sans-serif;font-variant-numeric:tabular-nums}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; display: flex; flex-direction: column; background: #F2F4F7; font-family: Inter, system-ui, sans-serif; color: #101828">
+  <header style="display: flex; flex-direction: column; gap: 12px; padding: 20px 16px 8px">
+    <div style="display: flex; align-items: center; gap: 8px">
+      <a href="Main.dc.html" aria-label="Back to Today" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; margin-left: -10px; color: #101828">
+        <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg>
+      </a>
+      <h1 class="num" style="margin: 0; font-size: 24px; font-weight: 600">Activity</h1>
+    </div>
+    <label style="display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 14px; border-radius: 12px; background: #FFFFFF; border: 1px solid #E4E7EC">
+      <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475467" stroke-width="2" stroke-linecap="round"><path d="M10.5 18a7.5 7.5 0 1 0 0-15 7.5 7.5 0 0 0 0 15z M16 16l5 5"></path></svg>
+      <span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Search payments</span>
+      <input type="search" placeholder="Search merchant, UPI ID or amount" style="flex: 1; border: 0; outline: none; font: inherit; font-size: 15px; background: transparent; color: #101828">
+    </label>
+    <div role="group" aria-label="Filter" style="display: flex; gap: 8px; flex-wrap: wrap">
+      <button type="button" aria-pressed="true" style="height: 36px; padding: 0 14px; border-radius: 18px; border: 0; background: #101828; color: #FFFFFF; font-size: 14px; font-weight: 500">All</button>
+      <button type="button" aria-pressed="false" style="height: 36px; padding: 0 14px; border-radius: 18px; border: 1px solid #D0D5DD; background: #FFFFFF; font-size: 14px; font-weight: 500">Spend</button>
+      <button type="button" aria-pressed="false" style="height: 36px; padding: 0 14px; border-radius: 18px; border: 1px solid #D0D5DD; background: #FFFFFF; font-size: 14px; font-weight: 500">Income</button>
+      <button type="button" aria-pressed="false" style="height: 36px; padding: 0 14px; border-radius: 18px; border: 1px solid #F9C9A8; background: #FFF4ED; color: #97180C; font-size: 14px; font-weight: 500">Needs review · 1</button>
+    </div>
+  </header>
+
+  <main style="flex: 1; overflow-y: auto; padding: 4px 16px 24px; display: flex; flex-direction: column; gap: 16px">
+    <sc-for list="{{days}}" as="d" hint-placeholder-count="2">
+      <section style="display: flex; flex-direction: column; gap: 8px">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; padding: 0 4px">
+          <h2 style="margin: 0; font-size: 14px; font-weight: 600; color: #344054">{{d.label}}</h2>
+          <span class="num" style="font-size: 13px; color: #475467">{{d.totals}}</span>
+        </div>
+        <ul style="list-style: none; margin: 0; padding: 4px 0; background: #FFFFFF; border-radius: 18px">
+          <sc-for list="{{d.rows}}" as="t" hint-placeholder-count="5">
+            <li style="display: flex; align-items: center; gap: 12px; padding: 10px 16px; min-height: 56px">
+              <span style="{{t.iconBg}}">
+                <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#101828" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="{{t.icon}}"></path></svg>
+              </span>
+              <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+                <span style="font-size: 15px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{t.name}}</span>
+                <span style="font-size: 12px; color: #475467">{{t.sub}}</span>
+              </span>
+              <span class="num" style="{{t.amountStyle}}">{{t.amountText}}</span>
+            </li>
+          </sc-for>
+        </ul>
+      </section>
+    </sc-for>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+var ICON = {
+  Food: ['#FFF4E6', 'M7 3v7a2 2 0 0 0 2 2v9 M11 3v7 M17 21V3c-2 1-3 3-3 6s1 4 3 4'],
+  Groceries: ['#EBFBEE', 'M3 4h2l2.4 11h11.1L21 7H6 M8 20a1.4 1.4 0 1 0 2.8 0a1.4 1.4 0 1 0-2.8 0 M15.5 20a1.4 1.4 0 1 0 2.8 0a1.4 1.4 0 1 0-2.8 0'],
+  Transport: ['#E7F5FF', 'M5 17v-6l2-5h10l2 5v6z M5 17v2 M19 17v2 M5 11h14'],
+  Shopping: ['#F8F0FC', 'M5 8h14l-1 13H6z M9 8V6a3 3 0 0 1 6 0v2'],
+  Entertainment: ['#FFF0F6', 'M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M10 9l5 3-5 3z'],
+  Health: ['#E6FCF5', 'M12 20s-7-4.4-9-9.2C1.8 7.6 4 4.5 7.3 4.5c2 0 3.6 1 4.7 2.6 1.1-1.6 2.7-2.6 4.7-2.6 3.3 0 5.5 3.1 4.3 6.3C19 15.6 12 20 12 20z'],
+  Other: ['#F1F3F5', 'M5 12a1 1 0 1 0 2 0a1 1 0 1 0-2 0 M11 12a1 1 0 1 0 2 0a1 1 0 1 0-2 0 M17 12a1 1 0 1 0 2 0a1 1 0 1 0-2 0'],
+  Income: ['#EFF4FF', 'M12 4v11 M7 10l5 5 5-5 M4 20h16']
+};
+
+// Engine output for fictional SMS (labeled_dev set, 20-21 Oct 2026).
+var DAYS = [
+  { label: 'Today · 21 Oct', rows: [
+    ['Iron Paradise', 'Other', 'UPI', 1500, 'debit', 'Needs review'],
+    ['Sri Sai Medicals', 'Health', 'Card', 875, 'debit', 'Likely'],
+    ['Amazon', 'Shopping', 'Card', 1499, 'debit', 'Auto'],
+    ['Zomato', 'Food', 'UPI', 412, 'debit', 'Auto'],
+    ['Priya S', 'Income', 'UPI', 1200, 'credit', 'Auto'],
+    ['BigBasket', 'Groceries', 'Card', 2340, 'debit', 'Auto'],
+    ['Ganesh Tea Stall', 'Food', 'UPI', 60, 'debit', 'Likely'],
+    ['Netflix', 'Entertainment', 'UPI', 199, 'debit', 'Auto'],
+    ['Rapido', 'Transport', 'UPI', 149, 'debit', 'Auto'],
+    ['Acme Technologies', 'Income', 'NEFT', 85000, 'credit', 'Auto']
+  ] },
+  { label: 'Yesterday · 20 Oct', rows: [
+    ['Blinkit', 'Groceries', 'UPI', 1240, 'debit', 'Auto'],
+    ['BigBasket', 'Groceries', 'UPI', 1186.5, 'debit', 'Auto'],
+    ['Apollo Pharmacy', 'Health', 'UPI', 1050, 'debit', 'Auto'],
+    ['Swiggy Instamart', 'Groceries', 'UPI', 312, 'debit', 'Auto'],
+    ['Rajesh Kumar', 'Other', 'UPI', 180, 'debit', 'You tagged'],
+    ['Karan Mehta', 'Income', 'UPI', 2500, 'credit', 'Auto']
+  ] }
+];
+
+function rupees(n) {
+  return '₹' + n.toLocaleString('en-IN', { maximumFractionDigits: 2 });
+}
+
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      days: DAYS.map(function (d) {
+        var spend = 0, income = 0;
+        var rows = d.rows.map(function (r) {
+          var credit = r[4] === 'credit';
+          if (credit) income += r[3]; else spend += r[3];
+          return {
+            name: r[0],
+            sub: r[2] + ' · ' + r[1] + ' · ' + r[5],
+            icon: ICON[r[1]][1],
+            iconBg: 'width: 36px; height: 36px; flex: none; border-radius: 18px; display: flex; align-items: center; justify-content: center; background: ' + ICON[r[1]][0],
+            amountText: (credit ? '+' : '') + rupees(r[3]),
+            amountStyle: 'font-size: 15px; font-weight: 600; color: ' + (credit ? '#175CD3' : '#101828')
+          };
+        });
+        return { label: d.label, totals: 'Spent ' + rupees(spend) + ' · In ' + rupees(income), rows: rows };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

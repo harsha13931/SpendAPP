@@ -1,0 +1,191 @@
+# Labeled sample SMS: HOLDOUT-2 split (blind).
+# Written after rules 2026.10.2 were frozen and scored once, without tuning.
+# Deliberately mixes phrasing the rules have not seen, lower-case alerts,
+# alerts without dates, unknown local merchants and genuinely ambiguous
+# cases. All content is fictional.
+
+- id: g001
+  sender: VM-HDFCBK
+  sms: "UPDATE: INR 1,200.00 debited from HDFC Bank XX1234 on 22-OCT-26. Info: UPI-ZOMATO-zomato.payu@hdfcbank. Avl bal:INR 9,870.00"
+  expect: {category: Food, amount: 1200.00, direction: debit, date: 2026-10-22, mode: UPI}
+- id: g002
+  sender: VM-HDFCBK
+  sms: "UPDATE: INR 385.00 debited from HDFC Bank XX1234 on 22-OCT-26. Info: UPI-OLA CABS-olacabs@ybl. Avl bal:INR 9,485.00"
+  expect: {category: Transport, amount: 385.00, direction: debit}
+- id: g003
+  sender: VM-HDFCBK
+  sms: "UPDATE: INR 72,500.00 deposited in HDFC Bank A/c XX1234 on 31-OCT-26 for NEFT Cr-ICIC0000001-WAYNE ENTERPRISES-SALARY. Avl bal:INR 82,355.00"
+  expect: {category: Income, amount: 72500.00, direction: credit, mode: NEFT}
+- id: g004
+  sender: JD-ICICIB
+  sms: "Rs 649.00 debited from ICICI Bank Savings Account XX234 on 22-Oct-26 towards autopay mandate for Spotify India. Avl Bal Rs 8,800.00."
+  expect: {category: Entertainment, amount: 649.00, direction: debit, mode: NACH}
+- id: g005
+  sender: JD-ICICIB
+  sms: "Payment of Rs 12,450.00 received towards your ICICI Bank Credit Card XX9012 on 22-Oct-26. Thank you."
+  expect: {category: Other, amount: 12450.00, direction: credit}  # card bill payment is a transfer, not income
+- id: g006
+  sender: JD-ICICIB
+  sms: "Interest of Rs 312.00 credited to your ICICI Bank Acct XX234 on 30-Sep-26."
+  expect: {category: Income, amount: 312.00, direction: credit}
+- id: g007
+  sender: BZ-SBIUPI
+  sms: "Dear UPI user A/C X5678 debited by 58.0 on date 22Oct26 trf to UDUPI GRAND Refno 629600000001. If not u? call 1800-000-0000. -SBI"
+  expect: {category: Food, amount: 58.00, direction: debit}
+- id: g008
+  sender: BZ-SBIUPI
+  sms: "Dear UPI user A/C X5678 debited by 420.0 on date 22Oct26 trf to SRI LAKSHMI TRADERS Refno 629600000002. If not u? call 1800-000-0000. -SBI"
+  expect: {category: Other, amount: 420.00, direction: debit}  # ambiguous: "traders" could be anything
+- id: g009
+  sender: BZ-SBIUPI
+  sms: "Dear UPI user A/C X5678 debited by 1180.0 on date 21Oct26 trf to KAVERI HOSPITAL Refno 629600000003. If not u? call 1800-000-0000. -SBI"
+  expect: {category: Health, amount: 1180.00, direction: debit}
+- id: g010
+  sender: BZ-SBIUPI
+  sms: "Dear UPI user A/C X5678 debited by 99.0 on date 21Oct26 trf to JIOCINEMA Refno 629600000004. If not u? call 1800-000-0000. -SBI"
+  expect: {category: Entertainment, amount: 99.00, direction: debit}
+- id: g011
+  sender: AX-AXISBK
+  sms: "INR 1,575.00 debited\nA/c no. XX3456\n22-10-26, 07:45:00\nUPI/P2M/629600000005/NATURES BASKET LTD\nNot you? SMS BLOCKUPI Cust ID to 90000XXXXX\nAxis Bank"
+  expect: {category: Groceries, amount: 1575.00, direction: debit}
+- id: g012
+  sender: AX-AXISBK
+  sms: "INR 260.00 debited\nA/c no. XX3456\n22-10-26, 08:30:00\nUPI/P2M/629600000006/NAMMA METRO BMRCL\nNot you? SMS BLOCKUPI Cust ID to 90000XXXXX\nAxis Bank"
+  expect: {category: Transport, amount: 260.00, direction: debit}
+- id: g013
+  sender: AX-AXISBK
+  sms: "INR 3,499.00 debited\nA/c no. XX3456\n21-10-26, 21:00:00\nUPI/P2M/629600000007/UNIQLO INDIA\nNot you? SMS BLOCKUPI Cust ID to 90000XXXXX\nAxis Bank"
+  expect: {category: Shopping, amount: 3499.00, direction: debit}
+- id: g014
+  sender: AX-AXISBK
+  sms: "Spent INR 870.00\nAxis Bank Card no. XX7777\n21-10-26 19:30:00\nKFC KORAMANGALA\nAvl Lmt INR 45,000.00\nNot you? SMS BLOCK 7777 to 90000XXXXX"
+  expect: {category: Food, amount: 870.00, direction: debit, account: "7777", mode: CARD}
+- id: g015
+  sender: AX-AXISBK
+  sms: "Spent INR 2,150.00\nAxis Bank Card no. XX7777\n20-10-26 13:10:00\nSHELL PETROL HSR\nAvl Lmt INR 42,850.00\nNot you? SMS BLOCK 7777 to 90000XXXXX"
+  expect: {category: Transport, amount: 2150.00, direction: debit}
+- id: g016
+  sender: VK-KOTAKB
+  sms: "Sent Rs.610.00 from Kotak Bank AC X7890 to myntra@icici on 22-10-26.UPI Ref 629600000008. Not you, https://example.invalid/fraud"
+  expect: {category: Shopping, amount: 610.00, direction: debit}
+- id: g017
+  sender: VK-KOTAKB
+  sms: "Sent Rs.1,150.00 from Kotak Bank AC X7890 to tatapower.ddl@hdfcbank on 21-10-26.UPI Ref 629600000009. Not you, https://example.invalid/fraud"
+  expect: {category: Bills, amount: 1150.00, direction: debit}
+- id: g018
+  sender: VK-KOTAKB
+  sms: "Sent Rs.300.00 from Kotak Bank AC X7890 to sunita.home@okicici on 21-10-26.UPI Ref 629600000010. Not you, https://example.invalid/fraud"
+  expect: {category: Other, amount: 300.00, direction: debit}
+- id: g019
+  sender: VK-KOTAKB
+  sms: "Received Rs.1,499.00 in your Kotak Bank AC X7890 from amazon refunds on 20-10-26.UPI Ref:629600000011."
+  expect: {category: Income, amount: 1499.00, direction: credit}
+- id: g020
+  sender: CP-CANBNK
+  sms: "An amount of INR 410.00 has been DEBITED to your account XXX1357 on 22/10/2026 towards UPI payment to SAGAR RATNA RESTAURANT. Total Avail.bal INR 5,690.00 - Canara Bank"
+  expect: {category: Food, amount: 410.00, direction: debit}
+- id: g021
+  sender: CP-CANBNK
+  sms: "An amount of INR 999.00 has been DEBITED to your account XXX1357 on 21/10/2026 towards UPI payment to VI POSTPAID. Total Avail.bal INR 4,691.00 - Canara Bank"
+  expect: {category: Bills, amount: 999.00, direction: debit}
+- id: g022
+  sender: AD-IDFCFB
+  sms: "Your IDFC FIRST Bank A/C ending 8642 is debited by INR 640.00 on 22-OCT-26 for UPI txn to cultfit@ybl. RRN 629600000012. Not you? Call 1800-000-0000"
+  expect: {category: Health, amount: 640.00, direction: debit}
+- id: g023
+  sender: AD-IDFCFB
+  sms: "Your IDFC FIRST Bank Credit Card ending 1122 was used for INR 1,250.00 at BARBEQUE NATION HOSPITALITY on 21-OCT-26. Avl limit INR 81,181.00"
+  expect: {category: Food, amount: 1250.00, direction: debit}
+- id: g024
+  sender: AD-IDFCFB
+  sms: "Your IDFC FIRST Bank Credit Card ending 1122 was used for INR 4,999.00 at APPLE MEDIA SERVICES on 20-OCT-26. Avl limit INR 76,182.00"
+  expect: {category: Entertainment, amount: 4999.00, direction: debit}
+- id: g025
+  sender: VM-YESBNK
+  sms: "INR 2,340.00 has been debited from your YES BANK A/c XX9753 towards UPI/629600000013/PEPPERFRY on 22-10-2026. Avl Bal: INR 2,710.00"
+  expect: {category: Shopping, amount: 2340.00, direction: debit}
+- id: g026
+  sender: VM-YESBNK
+  sms: "INR 180.00 has been debited from your YES BANK A/c XX9753 towards UPI/629600000014/RAMESH AUTO STAND on 21-10-2026. Avl Bal: INR 2,530.00"
+  expect: {category: Transport, amount: 180.00, direction: debit}
+- id: g027
+  sender: VM-PAYTMB
+  sms: "Paid Rs.250 to Hotel Saravana Bhavan from Paytm Payments Bank a/c XX0011. UPI Ref: 629600000015."
+  expect: {category: Food, amount: 250.00, direction: debit}
+- id: g028
+  sender: VM-PAYTMB
+  sms: "Paid Rs.60 to Ganga Milk Dairy from Paytm Payments Bank a/c XX0011. UPI Ref: 629600000016."
+  expect: {category: Groceries, amount: 60.00, direction: debit}
+- id: g029
+  sender: VM-PAYTMB
+  sms: "Paid Rs.2,999 to FreshToHome Foods from Paytm Payments Bank a/c XX0011. UPI Ref: 629600000017."
+  expect: {category: Groceries, amount: 2999.00, direction: debit}
+- id: g030
+  sender: JM-INDUSB
+  sms: "Dear Customer, INR 129.00 debited from your IndusInd A/c 7531XXXX via UPI to SONY LIV on 22/10/26. UPI Ref 629600000018."
+  expect: {category: Entertainment, amount: 129.00, direction: debit}
+- id: g031
+  sender: JM-INDUSB
+  sms: "Dear Customer, INR 5,000.00 debited from your IndusInd A/c 7531XXXX via UPI to ZERODHA BROKING on 21/10/26. UPI Ref 629600000019."
+  expect: {category: Other, amount: 5000.00, direction: debit}  # investment; no Investments category yet
+- id: g032
+  sender: AX-FEDBNK
+  sms: "Rs 845.00 debited from your A/c XX2244 to VPA thyrocare@icici on 22-10-2026 (UPI Ref No 629600000020). Not you? Call 1800-000-0000 - Federal Bank"
+  expect: {category: Health, amount: 845.00, direction: debit}
+- id: g033
+  sender: AX-FEDBNK
+  sms: "Rs 1,060.00 debited from your A/c XX2244 to VPA indane.gas@sbi on 21-10-2026 (UPI Ref No 629600000021). Not you? Call 1800-000-0000 - Federal Bank"
+  expect: {category: Bills, amount: 1060.00, direction: debit}
+- id: g034
+  sender: BV-BOBTXN
+  sms: "Rs.130.00 Dr. from A/C XXXXXX2468 thru UPI/629600000022 to CHAAYOS on 22-10-26. Bal:Rs.8,280.55 -Bank of Baroda"
+  expect: {category: Food, amount: 130.00, direction: debit}
+- id: g035
+  sender: BV-BOBTXN
+  sms: "Rs.560.00 Dr. from A/C XXXXXX2468 thru UPI/629600000023 to NETMEDS MARKETPLACE on 21-10-26. Bal:Rs.7,720.55 -Bank of Baroda"
+  expect: {category: Health, amount: 560.00, direction: debit}
+- id: g036
+  sender: BV-BOBTXN
+  sms: "Rs.89.00 Cr. to A/C XXXXXX2468 thru UPI/629600000024 from AMAZON CASHBACK on 21-10-26. Bal:Rs.7,809.55 -Bank of Baroda"
+  expect: {category: Income, amount: 89.00, direction: credit}
+- id: g037
+  sender: VD-UNIONB
+  sms: "A/c *6420 Debited for Rs:3,500.00 on 22-10-2026 09:00:00 by NACH ACH-DR HDFC LIFE INSURANCE ref no 629600000025 Avl Bal Rs:9,000.00-Union Bank of India"
+  expect: {category: Bills, amount: 3500.00, direction: debit, mode: NACH}
+- id: g038
+  sender: VM-HDFCBK
+  sms: "Sent Rs.75.00\nFrom HDFC Bank A/C *1234\nTo SWIGGY INSTAMRT\nOn 22/10/26\nRef 629600000026\nNot You?\nCall 1800-000-0000/SMS BLOCK UPI to 90000XXXXX"
+  expect: {category: Groceries, amount: 75.00, direction: debit}
+- id: g039
+  sender: VM-HDFCBK
+  sms: "Sent Rs.410.00\nFrom HDFC Bank A/C *1234\nTo RAPIDDO\nOn 22/10/26\nRef 629600000027\nNot You?\nCall 1800-000-0000/SMS BLOCK UPI to 90000XXXXX"
+  expect: {category: Transport, amount: 410.00, direction: debit}
+- id: g040
+  sender: VM-HDFCBK
+  sms: "Sent Rs.1,320.00\nFrom HDFC Bank A/C *1234\nTo GOLDEN SCISSORS SALON\nOn 21/10/26\nRef 629600000028\nNot You?\nCall 1800-000-0000/SMS BLOCK UPI to 90000XXXXX"
+  expect: {category: Other, amount: 1320.00, direction: debit}  # personal care; no category for it yet
+- id: g041
+  sender: VM-HDFCBK
+  sms: "Sent Rs.2,400.00\nFrom HDFC Bank A/C *1234\nTo REDBUS INDIA\nOn 21/10/26\nRef 629600000029\nNot You?\nCall 1800-000-0000/SMS BLOCK UPI to 90000XXXXX"
+  expect: {category: Transport, amount: 2400.00, direction: debit}
+- id: g042
+  sender: AD-AUBANK
+  sms: "Rs.1,799.00 spent on your AU Bank Debit Card XX4455 at FIRSTCRY COM on 20-10-26. Avl bal Rs.6,381.00. Not you? Call 1800-000-0000"
+  expect: {category: Shopping, amount: 1799.00, direction: debit}
+- id: g043
+  sender: AD-AUBANK
+  sms: "Rs.540.00 spent on your AU Bank Debit Card XX4455 at MORE RETAIL HSR on 20-10-26. Avl bal Rs.5,841.00. Not you? Call 1800-000-0000"
+  expect: {category: Groceries, amount: 540.00, direction: debit}
+# ---------------------------------------------------- non-transactional
+- id: g044
+  sender: VM-HDFCBK
+  sms: "Dear Customer, your HDFC Bank Credit Card XX5678 bill of Rs.18,230.00 is generated. Minimum amount due Rs.910.00. Due date 10-11-26."
+  expect: none
+- id: g045
+  sender: JD-ICICIB
+  sms: "Get flat Rs.150 cashback on your first bill payment via iMobile! T&C apply."
+  expect: none
+- id: g046
+  sender: VK-KOTAKB
+  sms: "Your UPI PIN for Kotak Bank AC X7890 has been changed successfully. Not you? Call 1800-000-0000"
+  expect: none

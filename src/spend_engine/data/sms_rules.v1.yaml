@@ -1,0 +1,156 @@
+# SPEND SMS parsing rules.
+#
+# Bank formats live here as data so they can be versioned, reviewed and
+# shipped without code changes. Bump `version` on every edit; the version is
+# stamped on each parsed transaction and on each logged parse failure.
+#
+# All regexes are Python `re` syntax, compiled case-insensitive.
+# All sample text in comments is fictional.
+
+version: "2026.10.2"
+# 2026.10.2  Dr./Cr. markers, "Rs:" amounts, account phrases rejected
+#            anywhere in a merchant candidate (from holdout-1 misses).
+
+# Messages that mention money but are not completed transactions.
+ignore:
+  - '\b(?:otp|one[- ]time password)\b'
+  - '\bverification code\b'
+  - '\bhas requested\b'                      # UPI collect request
+  - '\bwill be (?:debited|deducted)\b'       # mandate pre-debit notice
+  - '\b(?:is|are) due\b|\bdue (?:on|by|date)\b'
+  - '\bpre-?approved\b|\bloan offer\b|\bcashback (?:up ?to|of up)\b'
+  - '\b(?:failed|declined|unsuccessful)\b'
+  - '\bavail\b.*\boffer\b'
+
+# Text after these markers is boilerplate (helplines, block instructions) and
+# is cut before merchant extraction so "to 9XXXXXXXXX" is never a merchant.
+footer:
+  - '\bnot you\b'
+  - '\bif not (?:you|u)\b'
+  - '\bnot done by you\b'
+  - '\bsms block\b'
+  - '\bcall \d'
+  - '\bto block\b'
+  - '\bavl\.? (?:bal|lmt|limit)\b'
+  - '\bavailable (?:bal|balance|limit)\b'
+
+# Bank-specific templates, tried in order before the generic extractors.
+# `sender` (optional) filters on the SMS sender ID, e.g. "VM-HDFCBK".
+# Named groups: amount, account, merchant, vpa, date, ref. Missing groups are
+# filled by the generic extractors below.
+templates:
+  - id: sbi_upi_debit_v1
+    bank: SBI
+    direction: debit
+    mode: UPI
+    # "Dear UPI user A/C X5678 debited by 120.0 on date 21Oct26 trf to RAPIDO Refno 6294..."
+    pattern: 'a/c\s*x*(?P<account>\d{3,6})\s+debited by\s+(?:rs\.?\s*)?(?P<amount>[\d,]+(?:\.\d{1,2})?)\s+on date\s+(?P<date>\d{1,2}[a-z]{3}\d{2,4})\s+trf to\s+(?P<merchant>.+?)\s+ref\s*no\s*(?P<ref>\d{6,22})'
+  - id: sbi_upi_credit_v1
+    bank: SBI
+    direction: credit
+    mode: UPI
+    # "Dear SBI UPI User, ur A/cX5678 credited by Rs500 on 21Oct26 by AMIT VERMA (Ref no 6294...)"
+    pattern: 'a/c\s*x*(?P<account>\d{3,6})\s+credited by\s+(?:rs\.?\s*)?(?P<amount>[\d,]+(?:\.\d{1,2})?)\s+on\s+(?P<date>\d{1,2}[a-z]{3}\d{2,4})(?:\s+by\s+(?P<merchant>[^(]*?))?\s*\(ref no\s*(?P<ref>\d{6,22})\)'
+  - id: axis_upi_v1
+    bank: Axis
+    mode: UPI
+    # "INR 199.00 debited A/c no. XX3456 21-10-26, 08:15:22 UPI/P2M/6294.../NETFLIX COM ..."
+    pattern: '(?:inr|rs\.?)\s*(?P<amount>[\d,]+(?:\.\d{1,2})?)\s+(?P<direction>debited|credited)\s+a/c no\.?\s*x*(?P<account>\d{3,6})\s+(?P<date>\d{1,2}-\d{1,2}-\d{2,4}),?\s+[\d:]+\s+upi/p2[ma]/(?P<ref>\d{6,22})/(?P<merchant>[^/\n]+?)(?:/|\s+not you|\s+axis bank|$)'
+  - id: icici_upi_debit_v1
+    bank: ICICI
+    direction: debit
+    mode: UPI
+    # "ICICI Bank Acct XX234 debited for Rs 349.00 on 21-Oct-26; ZOMATO credited. UPI:6294..."
+    pattern: 'acct\s*x*(?P<account>\d{3,6})\s+debited for\s+(?:rs\.?|inr)\s*(?P<amount>[\d,]+(?:\.\d{1,2})?)\s+on\s+(?P<date>\d{1,2}-[a-z]{3}-\d{2,4});\s*(?P<merchant>.+?)\s+credited\.\s*upi:\s*(?P<ref>\d{6,22})'
+
+# Generic extractors, used when no template matches (or a template leaves a
+# field empty). The first matching pattern wins unless noted.
+fields:
+  amount:
+    - '(?:rs\.?|inr|₹)\s*:?\s*([\d,]+(?:\.\d{1,2})?)'
+    - '(?:debited|credited)\s+(?:by|for|with)\s+([\d,]+(?:\.\d{1,2})?)'
+
+  # The keyword that appears earliest in the message decides direction.
+  direction:
+    debit:
+      - '\bdebited\b'
+      - '\bdebit(?:ed)?\s+(?:of|for|by)\b'
+      - '\bspent\b'
+      - '\bsent\b'
+      - '\bpaid\b'
+      - '\bpayment of\b'
+      - '\bwithdrawn\b'
+      - '\bpurchase\b'
+      - '\bused for\b'
+      - '\bdeducted\b'
+      - '\d\s*dr\b\.?'            # "Rs.320.00 Dr. from A/C ..."
+    credit:
+      - '\bcredited\b'
+      - '\breceived\b'
+      - '\bdeposited\b'
+      - '\brefund(?:ed)?\b'
+      - '\breversed\b'
+      - '\d\s*cr\b\.?'            # "Rs.42,000.00 Cr. to A/C ..."
+
+  account:
+    - '(?<![a-z])(?:a/c|acct|account|ac|card)\.?\s*(?:no\.?\s*)?(?:ending\s*(?:with\s*)?)?[x*]*\s*(\d{3,16})\b'
+
+  vpa:
+    - '(?<![a-z0-9.\-_])([a-z0-9][a-z0-9.\-_]{1,255}@[a-z][a-z0-9]{1,63})(?![a-z0-9]|\.[a-z])'
+
+  ref:
+    - '\bupi/p2[ma]/(\d{6,22})'
+    - '(?:\bref(?:erence)?\.?\s*(?:no\.?|number)?|\brefno|\brrn|\butr(?:\s*no\.?)?|\bupi(?:\s*ref(?:\s*no\.?)?)?)[\s:.#-]*([a-z]{0,4}\d[a-z0-9]{5,21})'
+
+  # Each date pattern lists the strptime formats to try, in order.
+  date:
+    - pattern: '\b(\d{4}-\d{2}-\d{2})\b'
+      formats: ['%Y-%m-%d']
+    - pattern: '\b(\d{1,2}[-/]\d{1,2}[-/]\d{2,4})\b'
+      formats: ['%d-%m-%y', '%d-%m-%Y', '%d/%m/%y', '%d/%m/%Y']
+    - pattern: '\b(\d{1,2}[- ]?[a-z]{3}[- ]?\d{2,4})\b'
+      formats: ['%d-%b-%y', '%d-%b-%Y', '%d%b%y', '%d%b%Y', '%d %b %y', '%d %b %Y']
+
+  # Merchant candidates from every pattern are collected; the one that starts
+  # earliest in the message wins. Captures that look like an account phrase
+  # are discarded (see merchant_reject).
+  merchant:
+    - '\bupi/p2[ma]/\d+/([^/\n]+?)(?:/|$)'
+    - '\bto\s+(?:vpa\s+)?(.+?)(?=\s+(?:on|ref|refno|upi|via|from|using|at)\b|\s*[.,;(]|\s*$)'
+    - '\bat\s+(.+?)(?=\s+(?:on|ref|txn|via|using|from)\b|\s*[.,;(]|\s*$)'
+    # "spent using ... Card XX9012 on 21-Oct-26 on BIGBASKET."
+    - '\bon\s+\d{1,2}[-/ ]?(?:[a-z]{3}|\d{1,2})[-/ ]?\d{2,4}\s+(?:on|at)\s+(.+?)(?=\s*[.;(]|\s*$)'
+    - ';\s*(.+?)\s+credited\b'
+    - '\btowards\s+(.+?)(?=\s+(?:on|via|ref)\b|\s*[.,;(]|\s*$)'
+    - '\bby\s+(?:neft|imps|rtgs)[-/ ](.+?)(?=\s*[(.;]|\s+on\b|\s*$)'
+    - '\b(?:neft|imps)/(?:[a-z0-9]+/)?([^/]+?)(?:/|$)'
+    - '\bfrom\s+(?:vpa\s+)?(.+?)(?=\s+(?:on|ref|upi|via|in)\b|\s*[.,;(]|\s*$)'
+    - '\bby\s+(?!neft|imps|rtgs)(.+?)(?=\s*[(.;]|\s+on\b|\s*$)'
+
+  merchant_reject:
+    - '^(?:your\s+|ur\s+)?(?:a/c|ac|acct|account|card)\b'
+    - '(?<![a-z])(?:a/c|acct|account)(?![a-z])'
+    - '\bbank\s+(?:a/?c|ac|acct|account|card)\b'
+    - '^(?:a/c|ac)\s*(?:no\.?\s*)?x'
+    - '^(?:x+\d+|\d+)$'
+    - '^(?:atm|you|date)$'
+    - '^atm\b'
+
+  # Checked in order; first match sets payment mode.
+  mode:
+    - mode: ATM
+      pattern: '\batm\b|\bwithdrawn\b|\bcash withdrawal\b'
+    - mode: NACH
+      pattern: '\bnach\b|\bach-dr\b|\be-?mandate\b|\bauto-?debit\b|\bautopay\b|\bstanding instruction\b'
+    - mode: UPI
+      pattern: '\bupi\b|\bvpa\b'
+    - mode: CARD
+      pattern: '\bcard\b'
+    - mode: NEFT
+      pattern: '\bneft\b'
+    - mode: IMPS
+      pattern: '\bimps\b'
+    - mode: RTGS
+      pattern: '\brtgs\b'
+    - mode: NETBANKING
+      pattern: '\bnet ?banking\b|\bbillpay\b|\bbill pay\b'

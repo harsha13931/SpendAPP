@@ -1,0 +1,20 @@
+{
+  "v": 3,
+  "createdOnFiles": {"v": 1, "at": "2026-10-22T15:30:00Z"},
+  "title": "SPEND app design",
+  "launch": {"view": "canvas"},
+  "pages": [],
+  "boards": {
+    "Main.dc.html": {"x": 470, "y": 0, "w": 390, "h": 844, "title": "Today (interactive)", "is_interactive": true, "radius": 32},
+    "Onboarding.dc.html": {"x": 0, "y": 0, "w": 390, "h": 844, "title": "Onboarding: data access", "radius": 32},
+    "Activity.dc.html": {"x": 940, "y": 0, "w": 390, "h": 844, "title": "Activity", "radius": 32},
+    "System.dc.html": {"x": 0, "y": 1224, "w": 1330, "h": 980, "title": "Design tokens & components"}
+  },
+  "order": ["Main.dc.html", "Onboarding.dc.html", "Activity.dc.html", "System.dc.html"],
+  "notes": {
+    "flows": {"x": 0, "y": -300, "text": "SPEND · Android app v0.1", "kind": "title1", "maxW": 1330},
+    "system": {"x": 0, "y": 964, "text": "Design system", "kind": "title1", "maxW": 1330},
+    "howto": {"x": 1410, "y": 0, "w": 320, "maxH": 420, "fill": "blue", "size": "m", "text": "Press Play on Today. Tap the orange Needs review card (Iron Paradise, matched nothing, 20% confidence), pick Health and save: the daily breakdown recomputes and the row turns into You tagged. That is the correction loop from the engine: a per-user override that beats every other layer.\n\nAll figures come from running fictional SMS through spend_engine (scripts/demo_day.py)."}
+  },
+  "designSystems": []
+}
