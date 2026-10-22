@@ -2,6 +2,8 @@
 
 Run locally:  uvicorn spend_engine.api:app --reload
 Set SPEND_DB to a file path to persist between restarts (default: in-memory).
+Set SPEND_CORS_ORIGINS to a comma-separated list of origins allowed to call
+the API from a browser (default: Expo's web dev server, http://localhost:8081).
 """
 
 from __future__ import annotations
@@ -10,6 +12,7 @@ import os
 from datetime import date, datetime
 
 from fastapi import Depends, FastAPI, HTTPException, Query
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field, model_validator
 
 from .models import Category, CategoryResult, ParsedTransaction
@@ -53,8 +56,40 @@ class CorrectionResponse(BaseModel):
     updated_transactions: int
 
 
+class TransactionRecord(BaseModel):
+    """A stored transaction as the app lists it."""
+
+    id: int
+    txn_date: date | None
+    amount: float
+    amount_paise: int
+    direction: str
+    merchant: str | None
+    vpa: str | None
+    account_last4: str | None
+    ref_no: str | None
+    mode: str
+    category: Category
+    confidence: float
+    layer: str
+    matched: str | None
+    created_at: str
+
+    @classmethod
+    def from_row(cls, row) -> "TransactionRecord":
+        data = {k: row[k] for k in row.keys() if k in cls.model_fields}
+        return cls(**data, amount=row["amount_paise"] / 100)
+
+
 def create_app(service: SpendService | None = None) -> FastAPI:
     app = FastAPI(title="SPEND categorization engine", version="0.1.0")
+    origins = os.environ.get("SPEND_CORS_ORIGINS", "http://localhost:8081")
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=[o.strip() for o in origins.split(",") if o.strip()],
+        allow_methods=["GET", "POST"],
+        allow_headers=["content-type"],
+    )
     svc = service or SpendService.default(os.environ.get("SPEND_DB", ":memory:"))
 
     def get_service() -> SpendService:
@@ -104,6 +139,19 @@ def create_app(service: SpendService | None = None) -> FastAPI:
         except ValueError as e:
             raise HTTPException(status_code=422, detail=str(e))
         return CorrectionResponse(override_keys=keys, updated_transactions=updated)
+
+    @app.get("/transactions", response_model=list[TransactionRecord])
+    def transactions(
+        user_id: str = Query(..., min_length=1, max_length=64),
+        start: date = Query(..., alias="from", description="First day, YYYY-MM-DD"),
+        end: date = Query(..., alias="to", description="Last day (inclusive), YYYY-MM-DD"),
+        s: SpendService = Depends(get_service),
+    ):
+        if end < start:
+            raise HTTPException(status_code=422, detail="'to' is before 'from'")
+        if (end - start).days > 366:
+            raise HTTPException(status_code=422, detail="range is longer than a year")
+        return [TransactionRecord.from_row(r) for r in s.store.transactions_between(user_id, start, end)]
 
     @app.get("/summary", response_model=DailySummary)
     def summary(

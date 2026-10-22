@@ -3,8 +3,9 @@
 Android-first personal finance for India. SPEND reads bank and UPI alerts,
 auto-categorises each payment and shows a daily income-vs-spend summary.
 
-This repository holds **milestone 1**: the categorisation engine, a Python
-package with a FastAPI service. See [`docs/PLAN.md`](docs/PLAN.md) for the
+This repository holds the categorisation engine (milestone 1, a Python
+package with a FastAPI service) and the first version of the React Native
+Android app in [`app/`](app/README.md). See [`docs/PLAN.md`](docs/PLAN.md) for the
 roadmap, the Google Play SMS-policy finding, and the UX design.
 
 ## Quick start
@@ -16,7 +17,8 @@ uvicorn spend_engine.api:app --reload    # http://127.0.0.1:8000/docs
 ```
 
 Set `SPEND_DB=spend.db` to persist data between restarts. The default is
-in-memory.
+in-memory. `SPEND_CORS_ORIGINS` lists browser origins allowed to call the
+API; the default is the Expo web dev server, `http://localhost:8081`.
 
 ```bash
 curl -s -X POST localhost:8000/categorize -H 'content-type: application/json' -d '{
@@ -36,6 +38,7 @@ curl -s 'localhost:8000/summary?date=2026-10-21&user_id=demo'
 | `POST /categorize` | Parse one SMS, categorise it, store it (deduplicated by ref no.) |
 | `POST /corrections` | Re-tag a transaction or payee. Stored as a per-user override that beats every other layer |
 | `GET /summary?date=&user_id=` | Income, spend, net, spend by category with %, top category |
+| `GET /transactions?user_id=&from=&to=` | Stored transactions in a date range, newest first |
 | `GET /health`, `GET /categories` | Rules version, merchant count, category list |
 
 ## Layout
@@ -59,6 +62,7 @@ tests/
 reports/accuracy.md    generated accuracy report
 design/project/        UX design canvas source
 docs/PLAN.md           plan, policy check, design notes
+app/                   React Native (Expo) app, see app/README.md
 ```
 
 ## Adding a bank format

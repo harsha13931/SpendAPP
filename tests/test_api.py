@@ -62,3 +62,29 @@ def test_summary(client):
 
 def test_summary_requires_date(client):
     assert client.get("/summary", params={"user_id": "u1"}).status_code == 422
+
+
+def test_transactions_list(client):
+    client.post("/categorize", json={"user_id": "u1", "sms": SMS})
+    other_day = SMS.replace("21-Oct-26", "25-Oct-26").replace("629412345680", "629412345681")
+    client.post("/categorize", json={"user_id": "u1", "sms": other_day})
+    client.post("/categorize", json={"user_id": "u2", "sms": SMS})
+
+    rows = client.get("/transactions", params={"user_id": "u1", "from": "2026-10-20", "to": "2026-10-25"}).json()
+    assert [r["txn_date"] for r in rows] == ["2026-10-25", "2026-10-21"]
+    assert rows[1]["category"] == "Food" and rows[1]["amount"] == 349.0 and rows[1]["layer"] == "alias"
+
+    one_day = client.get("/transactions", params={"user_id": "u1", "from": "2026-10-21", "to": "2026-10-21"}).json()
+    assert len(one_day) == 1
+
+
+def test_transactions_range_validation(client):
+    params = {"user_id": "u1", "from": "2026-10-21", "to": "2026-10-20"}
+    assert client.get("/transactions", params=params).status_code == 422
+    params = {"user_id": "u1", "from": "2024-01-01", "to": "2026-01-01"}
+    assert client.get("/transactions", params=params).status_code == 422
+
+
+def test_cors_allows_expo_web_dev_server(client):
+    r = client.get("/health", headers={"Origin": "http://localhost:8081"})
+    assert r.headers["access-control-allow-origin"] == "http://localhost:8081"

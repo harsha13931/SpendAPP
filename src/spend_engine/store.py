@@ -126,6 +126,15 @@ class Store:
                 (user_id, day.isoformat()),
             ).fetchall()
 
+    def transactions_between(self, user_id: str, start: date, end: date) -> list[sqlite3.Row]:
+        """Transactions dated ``start``..``end`` inclusive, newest first."""
+        with self._lock:
+            return self._db.execute(
+                "SELECT * FROM transactions WHERE user_id = ? AND txn_date BETWEEN ? AND ?"
+                " ORDER BY txn_date DESC, id DESC",
+                (user_id, start.isoformat(), end.isoformat()),
+            ).fetchall()
+
     def user_transactions(self, user_id: str) -> list[sqlite3.Row]:
         with self._lock:
             return self._db.execute(

@@ -15,11 +15,12 @@ Health, Income, Other.
 | M1.5 | Data-source decision (see §3) | **Next** | Written decision on SMS vs Account Aggregator vs share-sheet, with Play policy confirmation |
 | M2 | Spring Boot API + Postgres | Not started | Engine behind a stable contract; per-user data isolated; migrations |
 | M3 | Ingestion pipeline (Kafka) | Not started | At-least-once ingest, idempotent on bank ref no. (already modelled in M1) |
-| M4 | React Native Android app | Not started | Screens from the design canvas; offline-first; accessibility pass |
+| M4 | React Native Android app (`app/`) | **In progress** | v0.1 done: onboarding, Today, re-tag, Activity, add-from-SMS, Privacy; sample + live modes. Next: share intent, on-device parsing, auth |
 | M5 | Account Aggregator integration (unblocks iOS) | Not started | Consent flow with a licensed AA; FIP data mapped to the M1 transaction model |
 
-M2 to M5 are deliberately not started. The brief gates app work on the
-accuracy target, and M1.5 can change M4's scope.
+M4 started once M1 met the accuracy target. The app reads data only
+through sources that need no restricted permission: pasted alerts sent to
+the engine, or built-in sample data. M1.5 decides what replaces that.
 
 ## 2. M1: what was built
 
