@@ -8,7 +8,26 @@ package with a FastAPI service) and the first version of the React Native
 Android app in [`app/`](app/README.md). See [`docs/PLAN.md`](docs/PLAN.md) for the
 roadmap, the Google Play SMS-policy finding, and the UX design.
 
-## Quick start
+## How to run
+
+**Step-by-step guide: [`docs/RUNNING.md`](docs/RUNNING.md)** covers the phone
+(Expo Go), emulator and browser, connecting the app to the engine, and
+troubleshooting.
+
+The short version:
+
+```bash
+git clone https://github.com/harsha13931/SpendAPP.git && cd SpendAPP
+
+# App with sample data: scan the QR code with Expo Go on your phone
+cd app && npm install && npx expo start
+
+# Engine for live mode, in a second terminal from the repo root
+pip install -e ".[dev]"
+SPEND_DB=spend.db uvicorn spend_engine.api:app --host 0.0.0.0 --port 8000
+```
+
+## Engine quick start
 
 ```bash
 pip install -e ".[dev]"

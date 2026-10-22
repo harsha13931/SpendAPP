@@ -9,6 +9,9 @@ implements the screens from the design canvas (`../design/project/`).
 
 ## Run it
 
+New to this? Follow the step-by-step guide in
+[`../docs/RUNNING.md`](../docs/RUNNING.md).
+
 ```bash
 npm install
 npm run android        # Expo dev server + Android emulator/device (Expo Go)
