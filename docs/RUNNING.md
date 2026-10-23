@@ -26,9 +26,6 @@ git clone https://github.com/harsha13931/SpendAPP.git
 cd SpendAPP
 ```
 
-Until this work is merged into the default branch, also run
-`git checkout ccr-f50c9fa4-268fqd`.
-
 ## 2. Run the app with sample data (no server)
 
 ```bash
